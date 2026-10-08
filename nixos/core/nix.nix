@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
   nix = {
@@ -21,8 +21,8 @@
   };
 
   # nix-output-monitor / nvd for human-friendly builds.
-  environment.systemPackages = [
-    pkgs.nix-output-monitor
-    pkgs.nvd
+  environment.systemPackages = with pkgs; [
+    nix-output-monitor
+    nvd
   ];
 }
