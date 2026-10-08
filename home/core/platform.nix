@@ -1,14 +1,12 @@
 { pkgs, ... }:
 
 {
-  # Distrobox provides containerized environments for non-Nix apps.
   home.packages = with pkgs; [
+    # Distrobox / Toolbox for compatibility environments.
     distrobox
     toolbox
-  ];
 
-  # Useful CLI utilities.
-  home.packages = with pkgs; [
+    # Misc CLI utilities.
     bitwise
     entr
     ncdu
