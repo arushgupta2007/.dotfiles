@@ -7,15 +7,15 @@
   };
 
   outputs = { self, nixpkgs, flake-utils }:
-    {
-      devShells = flake-utils.lib.eachDefaultSystem (system:
-        let
-          pkgs = import nixpkgs {
-            inherit system;
-            config.allowUnfree = true;
-          };
-        in
-        {
+    flake-utils.lib.eachDefaultSystem (system:
+      let
+        pkgs = import nixpkgs {
+          inherit system;
+          config.allowUnfree = true;
+        };
+      in
+      {
+        devShells = {
           default = pkgs.mkShell {
             name = "node-dev";
             packages = with pkgs; [
@@ -40,6 +40,6 @@
               fi
             '';
           };
-        });
-    };
+        };
+      });
 }
