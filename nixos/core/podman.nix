@@ -25,6 +25,6 @@
     };
   };
 
-  # Rootless container support.
-  services.podman.autoStart.enable = false; # Containers started manually.
+  # Rootless container support. Auto-start is opt-in per-container via
+  # Quadlet units; we don't start any by default.
 }
