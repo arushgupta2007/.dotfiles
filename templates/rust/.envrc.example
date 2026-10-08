@@ -1,0 +1,10 @@
+# Drop this in your project's root and rename to `.envrc`.
+# Requires `nix-direnv` (enabled in the dotfiles).
+#
+# Option A — reference the template by absolute path:
+use flake path:/home/arush/.dotfiles/templates/rust
+
+# Option B — copy the template into your project:
+#   cp /home/arush/.dotfiles/templates/rust/flake.nix ./
+#   cp /home/arush/.dotfiles/templates/rust/flake.lock ./
+#   use flake .

@@ -227,8 +227,46 @@ them automatically on next start (use `/reload` to refresh mid-session).
 
 ## Development shells
 
-Each `templates/<lang>/shell.nix` is a `mkShell` you can use with
-`nix develop .#<lang>` or via `nix-direnv`. They include:
+Each `templates/<lang>/` directory is a **self-contained flake** with its
+own `flake.nix` and `flake.lock`. Use them standalone or via the main flake.
+
+### Quick use from the main flake
+
+```bash
+nix develop .#python      # python template
+nix develop .#node        # node template
+nix develop .#rust        # rust template
+nix develop .#go          # go template
+nix develop .#cpp         # c/c++ template
+nix develop .#nix         # nix template
+```
+
+### Use a template directly
+
+```bash
+nix develop ./templates/python
+cd templates/python && nix develop
+```
+
+### Use with direnv in a project
+
+Each template ships an `.envrc.example`. Copy the relevant one into a
+project as `.envrc` and edit the path. `nix-direnv` (enabled in the
+dotfiles) activates the shell automatically on `cd`.
+
+For example, in a Python project:
+
+```bash
+cp /home/arush/.dotfiles/templates/python/.envrc.example .envrc
+# Edit .envrc if you moved the dotfiles repo
+direnv allow
+```
+
+You can either:
+- Reference the template by absolute path: `use flake path:/home/arush/.dotfiles/templates/python`
+- Or copy `flake.nix` + `flake.lock` into the project and `use flake .`
+
+### What each template includes
 
 | Template | Notable tools                                         |
 | -------- | ----------------------------------------------------- |

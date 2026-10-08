@@ -24,6 +24,9 @@ node_modules/
 .idea/
 .vscode/
 
+# direnv - real .envrc files (the .example templates are checked in)
+.envrc
+
 # Build directories
 build/
 dist/
