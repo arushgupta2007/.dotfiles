@@ -2,6 +2,7 @@
 {
   # Add user to libvirtd group
   users.users.${username}.extraGroups = [ "libvirtd" ];
+  users.extraGroups.vboxusers.members = [ username ];
 
   # Install necessary packages
   environment.systemPackages = with pkgs; [
@@ -9,7 +10,7 @@
     virt-viewer
     spice spice-gtk
     spice-protocol
-    win-virtio
+    virtio-win
     win-spice
     adwaita-icon-theme
   ];
@@ -20,11 +21,19 @@
       enable = true;
       qemu = {
         swtpm.enable = true;
-        ovmf.enable = true;
-        ovmf.packages = [ pkgs.OVMFFull.fd ];
       };
     };
+    # virtualbox.host.enable = true;
     spiceUSBRedirection.enable = true;
+
+    containers.enable = true;
+    podman = {
+      enable = true;
+      # Create a `docker` alias for podman, to use it as a drop-in replacement
+      dockerCompat = true;
+      # Required for containers under podman-compose to be able to talk to each other.
+      defaultNetwork.settings.dns_enabled = true;
+    };
   };
   services.spice-vdagentd.enable = true;
 }

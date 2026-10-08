@@ -1,22 +1,23 @@
 { pkgs, username, ... }: 
 {
-  services = {
-    xserver = {
-      enable = true;
-      xkb.layout = "us,fr";
-    };
+  # services = {
+  #   xserver = {
+  #     enable = true;
+  #     xkb.layout = "us";
+  #   };
+  #
+  #   displayManager.autoLogin = {
+  #     enable = true;
+  #     user = "${username}";
+  #   };
+  #   libinput = {
+  #     enable = true;
+  #     # mouse = {
+  #     #   accelProfile = "flat";
+  #     # };
+  #   };
+  # };
 
-    displayManager.autoLogin = {
-      enable = true;
-      user = "${username}";
-    };
-    libinput = {
-      enable = true;
-      # mouse = {
-      #   accelProfile = "flat";
-      # };
-    };
-  };
-  # To prevent getting stuck at shutdown
-  systemd.extraConfig = "DefaultTimeoutStopSec=10s";
+  # # To prevent getting stuck at shutdown
+  systemd.settings.Manager.DefaultTimeoutStopSec = "10s";
 }

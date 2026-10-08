@@ -3,7 +3,8 @@
   home.packages = with pkgs; [
     # swww
     swaybg
-    inputs.hypr-contrib.packages.${pkgs.system}.grimblast
+    inputs.hypr-contrib.packages.${pkgs.stdenv.hostPlatform.system}.grimblast
+    inputs.pyprland.packages.${pkgs.stdenv.hostPlatform.system}.pyprland
     hyprpicker
     grim
     slurp
@@ -12,8 +13,10 @@
     glib
     wayland
     direnv
+
+    hyprpolkitagent
   ];
-  systemd.user.targets.hyprland-session.Unit.Wants = [ "xdg-desktop-autostart.target" ];
+  # systemd.user.targets.hyprland-session.Unit.Wants = [ "xdg-desktop-autostart.target" ];
   wayland.windowManager.hyprland = {
     enable = true;
     xwayland = {
@@ -21,6 +24,6 @@
       # hidpi = true;
     };
     # enableNvidiaPatches = false;
-    systemd.enable = true;
+    systemd.enable = false; # For autostart, set to true
   };
 }

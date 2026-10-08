@@ -1,6 +1,7 @@
-{ pkgs, inputs, username, host, ...}:
+{ pkgs, inputs, username, host, lib, ...}:
 {
   imports = [ inputs.home-manager.nixosModules.home-manager ];
+
   home-manager = {
     useUserPackages = true;
     useGlobalPkgs = true;
@@ -12,7 +13,7 @@
         else [ ./../home ];
       home.username = "${username}";
       home.homeDirectory = "/home/${username}";
-      home.stateVersion = "24.05";
+      home.stateVersion = "26.11";
       programs.home-manager.enable = true;
     };
   };
@@ -20,7 +21,7 @@
   users.users.${username} = {
     isNormalUser = true;
     description = "${username}";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "kvm" ];
     shell = pkgs.zsh;
   };
   nix.settings.allowed-users = [ "${username}" ];

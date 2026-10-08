@@ -1,8 +1,9 @@
-{ ... }: 
+{ pkgs, inputs, ... }: 
 {
   wayland.windowManager.hyprland = {
+    package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+    # plugins = [ inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprexpo ];
     settings = {
-      
       # autostart
       exec-once = [
         "systemctl --user import-environment &"
@@ -16,21 +17,22 @@
         "waybar &"
         "swaync &"
         "wl-paste --watch cliphist store &"
-        "hyprlock"
+        "hypridle &"
+        # "hyprlock"
 
         ## App auto start
-        "[workspace 1 silent] floorp"
+        "[workspace 1 silent] brave"
         "[workspace 2 silent] kitty"
       ];
 
       input = {
-        kb_layout = "us,fr";
-        kb_options ="grp:alt_caps_toggle"; 
+        kb_layout = "us";
+        kb_options ="ctrl:nocaps"; 
         numlock_by_default = true;
-        follow_mouse = 0;
+        follow_mouse = 2;
         float_switch_override_focus = 0;
-        mouse_refocus = 0;
-        sensitivity = 0;
+        mouse_refocus = 1;
+        sensitivity = 0.4;
         touchpad = {
           natural_scroll = true;
         };
@@ -39,48 +41,33 @@
       general = {
         "$mainMod" = "SUPER";
         layout = "dwindle";
-        gaps_in = 0;
-        gaps_out = 0;
+        gaps_in = 2;
+        gaps_out = 4;
         border_size = 2;
         "col.active_border" = "rgb(98971a) rgb(cc241d) 45deg";
         "col.inactive_border" = "0x00000000";
-        border_part_of_window = false;
-        no_border_on_floating = false;
+
+        snap = {
+          enabled = true;
+        };
       };
 
       misc = {
-        disable_autoreload = true;
         disable_hyprland_logo = true;
         always_follow_on_dnd = true;
         layers_hog_keyboard_focus = true;
-        animate_manual_resizes = false;
+        animate_manual_resizes = true;
         enable_swallow = true;
         focus_on_activate = true;
-        new_window_takes_over_fullscreen = 2;
-        middle_click_paste = false;
+        middle_click_paste = true;
       };
 
-      dwindle = {
-        no_gaps_when_only = true;
-        force_split = 0;
-        special_scale_factor = 1.0;
-        split_width_multiplier = 1.0;
-        use_active_for_splits = true;
-        pseudotile = "yes";
-        preserve_split = "yes";
-      };
-
-      master = {
-        new_status = "master";
-        special_scale_factor = 1;
-        no_gaps_when_only = false;
-      };
 
       decoration = {
-        rounding = 0;
-        # active_opacity = 0.90;
-        # inactive_opacity = 0.90;
-        # fullscreen_opacity = 1.0;
+        rounding = 10;
+        active_opacity = 0.95;
+        inactive_opacity = 0.85;
+        fullscreen_opacity = 1.0;
 
         blur = {
           enabled = true;
@@ -96,13 +83,13 @@
           xray = true;
         };
 
-        drop_shadow = true;
-
-        shadow_ignore_window = true;
-        shadow_offset = "0 2";
-        shadow_range = 20;
-        shadow_render_power = 3;
-        "col.shadow" = "rgba(00000055)";
+        shadow = {
+          enabled = true;
+          range = 20;
+          ignore_window = true;
+          offset = "0 2";
+          color = "rgba(00000055)";
+        };
       };
 
       animations = {
@@ -140,24 +127,19 @@
         # keybindings
         "$mainMod, Return, exec, kitty"
         "ALT, Return, exec, kitty --title float_kitty"
-        "$mainMod SHIFT, Return, exec, kitty --start-as=fullscreen -o 'font_size=16'"
-        "$mainMod, B, exec, hyprctl dispatch exec '[workspace 1 silent] floorp'"
+        "$mainMod SHIFT, Return, exec, nautilus"
+        "$mainMod, B, exec, hyprctl dispatch exec '[workspace 1] brave'"
         "$mainMod, Q, killactive,"
         "$mainMod, F, fullscreen, 0"
         "$mainMod SHIFT, F, fullscreen, 1"
         "$mainMod, Space, togglefloating,"
-        "$mainMod, Space, centerwindow,"
-        "$mainMod, Space, resizeactive, exact 950 600"
         "$mainMod, D, exec, rofi -show drun"
-        "$mainMod SHIFT, D, exec, hyprctl dispatch exec '[workspace 4 silent] discord --enable-features=UseOzonePlatform --ozone-platform=wayland'"
-        "$mainMod SHIFT, S, exec, hyprctl dispatch exec '[workspace 5 silent] SoundWireServer'"
-        "$mainMod, Escape, exec, swaylock"
-        "ALT, Escape, exec, hyprlock"
+        # "$mainMod, ALT, Escape, exec, swaylock"
+        "$mainMod, Escape, exec, hyprlock"
         "$mainMod SHIFT, Escape, exec, power-menu"
         "$mainMod, P, pseudo,"
-        "$mainMod, J, togglesplit,"
+        "$mainMod SHIFT, J, togglesplit,"
         "$mainMod, T, exec, toggle_oppacity"
-        "$mainMod, E, exec, nautilus"
         "$mainMod SHIFT, B, exec, toggle_waybar"
         "$mainMod, C ,exec, hyprpicker -a"
         "$mainMod, W,exec, wallpaper-picker"
@@ -166,13 +148,17 @@
 
         # screenshot
         "$mainMod, Print, exec, grimblast --notify --cursor --freeze save area ~/Pictures/$(date +'%Y-%m-%d-At-%Ih%Mm%Ss').png"
-        ",Print, exec, grimblast --notify --cursor --freeze copy area"
+        ",Print, exec, grimblast --notify --freeze copy area"
 
         # switch focus
         "$mainMod, left, movefocus, l"
         "$mainMod, right, movefocus, r"
         "$mainMod, up, movefocus, u"
         "$mainMod, down, movefocus, d"
+        "$mainMod, h, movefocus, l"
+        "$mainMod, l, movefocus, r"
+        "$mainMod, k, movefocus, u"
+        "$mainMod, j, movefocus, d"
 
         # switch workspace
         "$mainMod, 1, workspace, 1"
@@ -185,6 +171,7 @@
         "$mainMod, 8, workspace, 8"
         "$mainMod, 9, workspace, 9"
         "$mainMod, 0, workspace, 10"
+        "$mainMod, z, focuscurrentorlast"
 
         # same as above, but switch to the workspace
         "$mainMod SHIFT, 1, movetoworkspacesilent, 1" # movetoworkspacesilent
@@ -214,9 +201,9 @@
         "$mainMod ALT, down, moveactive, 0 80"
 
         # media and volume controls
-        ",XF86AudioRaiseVolume,exec, pamixer -i 2"
-        ",XF86AudioLowerVolume,exec, pamixer -d 2"
-        ",XF86AudioMute,exec, pamixer -t"
+        ",XF86AudioRaiseVolume,exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 2%+"
+        ",XF86AudioLowerVolume,exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 2%-"
+        ",XF86AudioMute,exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
         ",XF86AudioPlay,exec, playerctl play-pause"
         ",XF86AudioNext,exec, playerctl next"
         ",XF86AudioPrev,exec, playerctl previous"
@@ -242,86 +229,109 @@
 
       # windowrule
       windowrule = [
-        "float,qView"
-        "center,qView"
-        "size 1200 725,qView"
-        "float,imv"
-        "center,imv"
-        "size 1200 725,imv"
-        "float,mpv"
-        "center,mpv"
-        "tile,Aseprite"
-        "size 1200 725,mpv"
-        "float,title:^(float_kitty)$"
-        "center,title:^(float_kitty)$"
-        "size 950 600,title:^(float_kitty)$"
-        "float,audacious"
-        "pin,rofi"
-        "tile, neovide"
-        "idleinhibit focus,mpv"
-        "float,udiskie"
-        "float,title:^(Transmission)$"
-        "float,title:^(Volume Control)$"
-        "float,title:^(Firefox — Sharing Indicator)$"
-        "move 0 0,title:^(Firefox — Sharing Indicator)$"
-        "size 700 450,title:^(Volume Control)$"
-        "move 40 55%,title:^(Volume Control)$"
+        "float on, match:class qView"
+        "center on, match:class qView"
+        "size 1200 725, match:class qView"
+
+        "float on, match:class imv"
+        "center on, match:class imv"
+        "size 1200 725, match:class mpv"
+
+        "float on, match:title ^(float_kitty)$"
+        "center on, match:title ^(float_kitty)$"
+        "size 950 600, match:title ^(float_kitty)$"
+
+        "float on, match:class audacious"
+
+        "pin on, match:class rofi"
+
+        "tile on,  match:class neovide"
+
+        "idle_inhibit focus, match:class mpv"
+
+        "float on, match:class udiskie"
+
+        "float on, match:title ^(Transmission)$"
+        "float on, match:title ^(Volume Control)$"
+        "float on, match:title ^(Firefox — Sharing Indicator)$"
+        "size 700 450, match:title ^(Volume Control)$"
+        "move 40 55%, match:title ^(Volume Control)$"
+
+        "opacity 1, match:title ^(KDE Connect Daemon)"
+        "no_blur on, match:title ^(KDE Connect Daemon)"
+        "no_shadow on, match:title ^(KDE Connect Daemon)"
+        "float on, match:title ^(KDE Connect Daemon)"
+        "pin on, match:title ^(KDE Connect Daemon)"
+        "min_size 2256 1504, match:title ^(KDE Connect Daemon)"
+        "move 50% 50%, match:title ^(KDE Connect Daemon)"
+
+        "float on, match:title ^(Picture-in-Picture)$"
+        "pin on, match:title ^(Picture-in-Picture)$"
+        "opacity 1.0 override 1.0 override, match:title ^(.*imv.*)$"
+        "opacity 1.0 override 1.0 override, match:title ^(.*mpv.*)$"
+        "opacity 1.0 override 1.0 override,  match:class seprite"
+        "opacity 1.0 override 1.0 override,  match:class nity"
+        "opacity 1.0 override 1.0 override,  match:class loorp"
+        "opacity 1.0 override 1.0 override,  match:class rave"
+        "opacity 1.0 override 1.0 override,  match:class vince"
+        "workspace 1,  match:class floorp$"
+        "workspace 1,  match:class brave$"
+        "workspace 6,  match:class discord$"
+        "workspace 7,  match:class Gimp-2.10$"
+        "workspace 8,  match:class Aseprite$"
+        "workspace 8,  match:class Audacious$"
+        "workspace 9,  match:class Spotify$"
+        "idle_inhibit fullscreen,  match:class firefox$"
+        "size 850 500, match:title ^(File Upload)$"
+        "float on, match:class pavucontrol$"
+        "float on, match:class SoundWireServer$"
+        "float on, match:class .sameboy-wrapped$"
+        "float on, match:class file_progress$"
+        "float on, match:class confirm$"
+        "float on, match:class dialog$"
+        "float on, match:class download$"
+        "float on, match:class notification$"
+        "float on, match:class error$"
+        "float on, match:class confirmreset$"
+        "float on, match:title ^(Open File)$"
+        "float on, match:title ^(File Upload)$"
+        "float on, match:title ^(branchdialog)$"
+        "float on, match:title ^(Confirm to replace files)$"
+        "float on, match:title ^(File Operation Progress)$"
+
+        "opacity 0.0 override, match:class xwaylandvideobridge$"
+        "no_anim on, match:class xwaylandvideobridge$"
+        "no_initial_focus on, match:class xwaylandvideobridge$"
+        "max_size 1 1, match:class xwaylandvideobridge$"
+        "no_blur on, match:class xwaylandvideobridge$"
       ];
 
-      # windowrulev2
-      windowrulev2 = [
-        "float, title:^(Picture-in-Picture)$"
-        "opacity 1.0 override 1.0 override, title:^(Picture-in-Picture)$"
-        "pin, title:^(Picture-in-Picture)$"
-        "opacity 1.0 override 1.0 override, title:^(.*imv.*)$"
-        "opacity 1.0 override 1.0 override, title:^(.*mpv.*)$"
-        "opacity 1.0 override 1.0 override, class:(Aseprite)"
-        "opacity 1.0 override 1.0 override, class:(Unity)"
-        "opacity 1.0 override 1.0 override, class:(floorp)"
-        "opacity 1.0 override 1.0 override, class:(evince)"
-        "workspace 1, class:^(floorp)$"
-        "workspace 4, class:^(discord)$"
-        "workspace 4, class:^(Gimp-2.10)$"
-        "workspace 4, class:^(Aseprite)$"
-        "workspace 5, class:^(Audacious)$"
-        "workspace 5, class:^(Spotify)$"
-        "idleinhibit focus, class:^(mpv)$"
-        "idleinhibit fullscreen, class:^(firefox)$"
-        "float,class:^(zenity)$"
-        "center,class:^(zenity)$"
-        "size 850 500,class:^(zenity)$"
-        "size 850 500,title:^(File Upload)$"
-        "float,class:^(pavucontrol)$"
-        "float,class:^(SoundWireServer)$"
-        "float,class:^(.sameboy-wrapped)$"
-        "float,class:^(file_progress)$"
-        "float,class:^(confirm)$"
-        "float,class:^(dialog)$"
-        "float,class:^(download)$"
-        "float,class:^(notification)$"
-        "float,class:^(error)$"
-        "float,class:^(confirmreset)$"
-        "float,title:^(Open File)$"
-        "float,title:^(File Upload)$"
-        "float,title:^(branchdialog)$"
-        "float,title:^(Confirm to replace files)$"
-        "float,title:^(File Operation Progress)$"
-
-        "opacity 0.0 override,class:^(xwaylandvideobridge)$"
-        "noanim,class:^(xwaylandvideobridge)$"
-        "noinitialfocus,class:^(xwaylandvideobridge)$"
-        "maxsize 1 1,class:^(xwaylandvideobridge)$"
-        "noblur,class:^(xwaylandvideobridge)$"
+      layerrule = [
+        "blur on, match:namespace swaync-control-center"
+        "blur on, match:namespace swaync-notification-window"
+        "ignore_alpha 0, match:namespace swaync-control-center"
+        "ignore_alpha 0, match:namespace swaync-notification-window"
       ];
-
     };
 
     extraConfig = "
-      monitor=,preferred,auto,auto
+      # monitor=,preferred,auto,auto
+      monitor=eDP-1,2256x1504@60,0x0,1
 
       xwayland {
         force_zero_scaling = true
       }
     ";
+  };
+
+  services.hypridle = {
+    enable = true;
+    settings = {
+      general = {
+        after_sleep_cmd = "hyprctl dispatch dpms on";
+        ignore_dbus_inhibit = false;
+        lock_cmd = "hyprlock";
+      };
+    };
   };
 }

@@ -5,19 +5,19 @@
     # gamemode
     # gamescope
     # winetricks
-    # inputs.nix-gaming.packages.${pkgs.system}.wine-ge
+    # inputs.nix-gaming.packages.${pkgs.stdenv.hostPlatform..system}.wine-ge
 
     ## Minecraft
     # prismlauncher
 
     ## Cli games
-    _2048-in-terminal
+    # _2048-in-terminal
     vitetris
     nethack
     
     ## Celeste
-    celeste-classic
-    celeste-classic-pm
+    # celeste-classic
+    # celeste-classic-pm
 
     ## Doom
     # gzdoom

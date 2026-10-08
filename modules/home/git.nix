@@ -2,24 +2,28 @@
 {
   programs.git = {
     enable = true;
-    
-    userName = "Frost-Phoenix";
-    userEmail = "67cyril6767@gmail.com";
-    
-    extraConfig = { 
+     
+    settings = { 
+      user = {
+        name = "Arush Gupta";
+        email = "arush.agu@protonmail.com";
+      };
+
       init.defaultBranch = "main";
       credential.helper = "store";
       merge.conflictstyle = "diff3";
       diff.colorMoved = "default";
     };
+  };
 
-    delta = {
-      enable = true;
-      options = {
-        line-numbers = true;
-        # side-by-side = true;
-        navigate = true;
-      };
+  programs.delta = {
+    enable = true;
+    enableGitIntegration = true;
+
+    options = {
+      line-numbers = true;
+      # side-by-side = true;
+      navigate = true;
     };
   };
 

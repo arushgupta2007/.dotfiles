@@ -3,16 +3,16 @@
   programs.kitty = {
     enable = true;
 
-    theme = "Gruvbox Dark Hard";
+    themeFile = "GruvboxMaterialDarkHard";
     
     font = {
       name = "FiraCode Nerd Font";
-      size = if (host == "laptop") then 14 else 16;
+      size = 13;
     };
 
     settings = {
       confirm_os_window_close = 0;
-      background_opacity = "0.75";
+      # background_opacity = "0.95";
       window_padding_width = 10;
       scrollback_lines = 10000;
       enable_audio_bell = false;

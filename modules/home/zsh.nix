@@ -1,20 +1,11 @@
-{ hostname, config, pkgs, host, ...}: 
-{
-  programs.zsh = {
-    enable = true;
-    enableCompletion = true;
-    autosuggestion.enable = true;
-    syntaxHighlighting.enable = true;
-    oh-my-zsh = {
-      enable = true;
-      plugins = [ ];
-    };
-    initExtraFirst = ''
+{ hostname, config, pkgs, host, lib, ...}: 
+let
+  zshConfigFirst = lib.mkOrder 500 ''
       DISABLE_AUTO_UPDATE=true
       DISABLE_MAGIC_FUNCTIONS=true
       export "MICRO_TRUECOLOR=1"
-    '';
-    initExtra = ''
+  '';
+  zshConfigExtra = lib.mkOrder 1200 ''
       setopt share_history 
       setopt hist_expire_dups_first
       setopt hist_ignore_dups
@@ -45,6 +36,47 @@
           *)            fzf --preview "$show_file_or_dir_preview" "$@" ;;
         esac
       }
+  '';
+in
+{
+  programs.zsh = {
+    enable = true;
+    enableCompletion = true;
+    autosuggestion.enable = true;
+    syntaxHighlighting.enable = true;
+    oh-my-zsh = {
+      enable = true;
+      plugins = [ ];
+    };
+    plugins = [
+      {
+        name = "zsh-nix-shell";
+        file = "nix-shell.plugin.zsh";
+        src = pkgs.fetchFromGitHub {
+          owner = "chisui";
+          repo = "zsh-nix-shell";
+          rev = "v0.8.0";
+          sha256 = "1lzrn0n4fxfcgg65v0qhnj7wnybybqzs4adz7xsrkgmcsr0ii8b7";
+        };
+      }
+    ];
+
+    initContent = lib.mkMerge [ zshConfigFirst zshConfigExtra ];
+
+    profileExtra = ''
+      command_not_found_handle() {
+      # don't run if not in a container
+        if [ ! -e /run/.containerenv ] && [ ! -e /.dockerenv ]; then
+          exit 127
+        fi
+        
+        distrobox-host-exec "''${@}"
+      }
+      if [ -n "''${ZSH_VERSION-}" ]; then
+        command_not_found_handler() {
+          command_not_found_handle "$@"
+       }
+      fi
     '';
     shellAliases = {
       # Utils
@@ -62,12 +94,12 @@
       space = "ncdu";
       man = "BAT_THEME='default' batman";
 
-      l = "eza --icons  -a --group-directories-first -1"; #EZA_ICON_SPACING=2
+      l = "eza --icons  -a --group-directories-first -1 --no-user --long"; #EZA_ICON_SPACING=2
       ll = "eza --icons  -a --group-directories-first -1 --no-user --long";
       tree = "eza --icons --tree --group-directories-first";
 
       # Nixos
-      cdnix = "cd ~/nixos-config && codium ~/nixos-config";
+      cdnix = "cd ~/.dotfiles && codium ~/.dotfiles";
       ns = "nom-shell --run zsh";
       nix-switch = "nh os switch";
       nix-update = "nh os switch --update";
@@ -78,6 +110,9 @@
       # python
       piv = "python -m venv .venv";
       psv = "source .venv/bin/activate";
+
+      # C++
+      compile = "clang++ -Wall -Wextra -pedantic -std=c++23 -O2 -Wshadow -Wformat=2 -Wfloat-equal -Wconversion -Wlogical-op -Wshift-overflow=2 -Wduplicated-cond -Wcast-qual -Wcast-align -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2 -fsanitize=address -fsanitize=undefined -fno-sanitize-recover -fstack-protector";
     };
   };
 
