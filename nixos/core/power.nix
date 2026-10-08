@@ -11,22 +11,13 @@
     tlp.enable = lib.mkForce false; # power-profiles-daemon is preferred
   };
 
-  # Suspend-then-hibernate after 30 minutes of inactivity.
-  services.logind = {
-    settings = {
-      Login = {
-        HandlePowerKey = "ignore";
-        HandleSuspendKey = "suspend";
-        HandleHibernateKey = "hibernate";
-        HandleLidSwitch = "suspend";
-        HandleLidSwitchDocked = "ignore";
-      };
-      Sleep = {
-        # Suspend then hibernate after 30 min to save battery.
-        HybridSleepMode = "suspend-then-hibernate";
-        SuspendThenHibernateDelaySec = "30min";
-      };
-    };
+  # Lid-switch / power-key behaviour.
+  services.logind.settings.Login = {
+    HandlePowerKey = "ignore";
+    HandleSuspendKey = "suspend";
+    HandleHibernateKey = "hibernate";
+    HandleLidSwitch = "suspend";
+    HandleLidSwitchDocked = "ignore";
   };
 
   # powerManagement.cpuFreqGovernor is set by the host configuration.
