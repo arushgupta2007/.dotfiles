@@ -88,6 +88,6 @@
         nix = (import ./templates/nix/shell.nix) { inherit pkgs; };
       };
 
-      formatter.${system} = pkgs.nixfmt-rfc-style;
+      formatter.${system} = pkgs.nixfmt;
     };
 }

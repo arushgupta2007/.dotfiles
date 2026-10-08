@@ -9,7 +9,7 @@
     defaultEditor = true;
     extraPackages = with pkgs; [
       # Nix language tooling.
-      nixfmt-rfc-style
+      nixfmt
       nil
       nixd
       statix

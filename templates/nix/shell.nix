@@ -10,7 +10,7 @@ pkgs.mkShell {
 
   packages = with pkgs; [
     # Formatting and linting.
-    nixfmt-rfc-style
+    nixfmt
     nixd
     nil
     statix
