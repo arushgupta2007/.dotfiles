@@ -5,15 +5,13 @@
   },
 }:
 
-pkgs.mkShell {
-  name = "python-dev";
-
-  packages = with pkgs; [
-    # Python with uv for dependency management.
-    uv
-    python313
-
-    # Python tooling.
+let
+  py = pkgs.python313.withPackages (p: with p; [
+    requests
+    numpy
+    pandas
+    matplotlib
+    scipy
     ruff
     basedpyright
     pytest
@@ -23,23 +21,14 @@ pkgs.mkShell {
     isort
     mypy
     pipx
+  ]);
+in
+pkgs.mkShell {
+  name = "python-dev";
 
-    # Common scientific Python packages.
-    numpy
-    pandas
-    matplotlib
-    scipy
-    requests
-
-    # Project utilities.
-    git
-    gnumake
-    pre-commit
-
-    # Linters and formatters.
-    shellcheck
-    shfmt
-    editorconfig-checker
+  packages = [
+    pkgs.uv
+    py
   ];
 
   shellHook = ''
