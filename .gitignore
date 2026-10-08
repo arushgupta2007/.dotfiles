@@ -2,7 +2,10 @@
 result
 result-*
 
-# Secret material (already encrypted on disk)
+# Secret material — never committed. Each machine that needs to decrypt
+# a secret must run `cd secrets && agenix -e <name>.age` to provision it
+# locally. The plaintext never enters Git; only the rules in
+# secrets/secrets.nix are version-controlled.
 *.age
 !secrets/*.age.example
 

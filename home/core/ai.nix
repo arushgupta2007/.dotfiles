@@ -28,10 +28,10 @@ let
       cat "${config.age.secrets.openrouter-api-key.path}"
     '');
 
-  # The path that HM creates for skill / prompt / extension files. Pi
-  # discovers resources relative to the agent directory (default
-  # ~/.pi/agent), so absolute `$HOME`-relative paths via home.file are
-  # the right mechanism for declarative deployment.
+  # Pi's agent directory. Verified against Pi 0.87.1's bundled
+  # `package.json` (`piConfig.configDir = ".pi"`) and the
+  # `getAgentDir()` helper in `dist/config.js`, which resolves to
+  # `~/.pi/agent/` unless overridden by `PI_CODING_AGENT_DIR`.
   piAgentDir = ".pi/agent";
 in
 {
@@ -40,18 +40,22 @@ in
   # the agenix secret exists.
   home.packages = [ pkgs.pi-coding-agent ] ++ openrouterKeyScript;
 
-  # Pi's authentication file. `force = false` lets the user override
-  # this declaratively-set value via `/login` if they ever want Pi to
-  # manage its own credentials.
-  xdg.configFile."${piAgentDir}/auth.json" = lib.mkIf hasSecret {
+  # Pi's authentication file. Deployed under ~/.pi/agent/ — the same
+  # location Pi reads from at startup (see `getAuthPath()` in
+  # `dist/config.js`). `home.file` creates a regular writable file, so
+  # Pi can still update it via `/login`; HM will only overwrite on a
+  # subsequent `home-manager switch` if the source content changes.
+  # We do NOT set `force = true`, so user edits survive rebuilds as
+  # long as the agenix secret stays the same.
+  home.file."${piAgentDir}/auth.json" = lib.mkIf hasSecret {
     text = authJson;
   };
 
   # Pi's user-level configuration. Stable settings, skill manifests,
   # prompt templates, and (later) extensions are symlinked from the
   # Nix store into ~/.pi/agent/. Pi's runtime state (sessions,
-  # compaction cache, /login-managed auth.json overrides) lives in
-  # XDG state dirs and is intentionally NOT touched here.
+  # compaction cache) lives in XDG state dirs and is intentionally NOT
+  # touched here.
   home.file."${piAgentDir}/AGENTS.md".source = ./../../pi/AGENTS.md;
   home.file."${piAgentDir}/settings.json".source = ./../../pi/settings.json;
   home.file."${piAgentDir}/skills".source = ./../../pi/skills;

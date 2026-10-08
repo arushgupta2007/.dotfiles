@@ -14,11 +14,14 @@
       "audio"
       "video"
       "plugdev"
-      "input"
       "libvirtd"
       "qemu-libvirtd"
-      "docker"
     ];
+    # The user is in the `podman` group (added by `nixos/core/podman.nix`)
+    # so the rootless podman socket works without giving access to the
+    # docker socket. `input` group is intentionally NOT granted — Niri
+    # accesses input devices through the logind seat, and raw access to
+    # /dev/input/event* is unnecessary for a regular desktop session.
     shell = pkgs.zsh;
     # The user's shell is configured via Home Manager, so the system
     # check is satisfied by HM rather than NixOS modules.

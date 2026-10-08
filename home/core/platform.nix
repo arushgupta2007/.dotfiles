@@ -21,7 +21,11 @@
   ];
 
   # Lazydocker — TUI for Docker / Podman. Configured to talk to the
-  # rootless podman socket, which is activated below.
+  # rootless podman socket, which is activated by the NixOS podman
+  # module (`virtualisation.podman.enable = true` in
+  # nixos/core/podman.nix). That module already installs a
+  # rootless user socket at $XDG_RUNTIME_DIR/podman/podman.sock and
+  # binds it to `sockets.target`, so we don't redeclare it here.
   programs.lazydocker = {
     enable = true;
     settings = {
@@ -36,17 +40,5 @@
   # ~/.profile / /etc/profile.d, where the shell expands the variable.
   home.sessionVariables = {
     DOCKER_HOST = "unix://$XDG_RUNTIME_DIR/podman/podman.sock";
-  };
-
-  # Auto-start the user podman socket so lazydocker / podman CLI work
-  # after a fresh login. The `%t` specifier expands to the user's
-  # XDG_RUNTIME_DIR at activation time.
-  systemd.user.sockets.podman = {
-    Unit.Description = "Podman API Socket";
-    Socket = {
-      ListenStream = "%t/podman/podman.sock";
-      SocketMode = "0660";
-    };
-    Install.WantedBy = [ "sockets.target" ];
   };
 }

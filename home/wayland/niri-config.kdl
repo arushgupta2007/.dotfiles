@@ -85,10 +85,18 @@ workspace "Oxf"
 workspace "Prj"
 workspace "Fun"
 
-// Spawn DMS-required services.
-spawn-at-startup "systemctl --user import-environment"
-spawn-at-startup "hash dbus-update-activation-environment 2>/dev/null"
-spawn-at-startup "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=niri"
+// DMS-related session startup. When niri is launched via the
+// `niri-session` wrapper (the standard entry point from a display
+// manager or TTY), that wrapper already runs
+// `systemctl --user import-environment` and
+// `dbus-update-activation-environment --all` before exec'ing
+// `niri.service`. So no `spawn-at-startup` is needed here for the
+// environment propagation.
+//
+// Note: `spawn-at-startup` does NOT use a shell, so multi-word
+// commands or shell features (pipes, redirects, `hash`) must use
+// `spawn-sh-at-startup` (since niri 25.08). We rely on
+// `niri-session` instead, so nothing is required here.
 
 hotkey-overlay {
     skip-at-startup

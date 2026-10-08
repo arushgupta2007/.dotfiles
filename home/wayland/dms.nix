@@ -29,7 +29,9 @@
     config = {
       listen_addr = ":43654";
       max_file_bytes = 20971520; # 20 MiB
-      worker_count = 8;
+      # 4 workers is enough for typical workloads on a 16 GB laptop
+      # and keeps memory pressure reasonable while DMS itself runs.
+      worker_count = 4;
 
       index_paths = [
         {
