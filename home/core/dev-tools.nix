@@ -14,17 +14,15 @@
     gh
     git-lfs
 
-    # Other utilities.
-    nix-prefetch-github
-    nwg-displays
-    nwg-look
-  ];
-
-  # Common dev tools available system-wide.
-  environment.systemPackages = with pkgs; [
+    # Common dev tools.
     gcc
     gnumake
     pkg-config
     openssl
+
+    # Other utilities.
+    nix-prefetch-github
+    nwg-displays
+    nwg-look
   ];
 }
