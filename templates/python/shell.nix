@@ -13,7 +13,6 @@ let
     matplotlib
     scipy
     ruff
-    basedpyright
     pytest
     pytest-cov
     ipython
@@ -29,6 +28,7 @@ pkgs.mkShell {
   packages = [
     pkgs.uv
     py
+    pkgs.basedpyright
   ];
 
   shellHook = ''
