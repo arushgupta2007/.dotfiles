@@ -5,10 +5,12 @@
     enable = true;
     package = pkgs.brave;
     commandLineArgs = [
-      "--enable-features=UseOzonePlatform"
+      # Select Wayland over XWayland for the main window.
       "--ozone-platform=wayland"
-      "--enable-features=TouchpadOverscrollHistoryNavigation"
-      "--enable-features=VaapiVideoDecoder"
+      # Comma-separated list of feature flags (avoids the duplicate
+      # `--enable-features=` repetition and is the supported syntax).
+      "--enable-features=TouchpadOverscrollHistoryNavigation,VaapiVideoDecoder"
+      # ChromeOS-specific decoder that we do not want on Linux.
       "--disable-features=UseChromeOSDirectVideoDecoder"
     ];
     extensions = [
