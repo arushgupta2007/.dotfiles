@@ -2,7 +2,11 @@
 
 {
   networking = {
-    networkmanager.enable = true;
+    networkmanager = {
+      enable = true;
+      # WiFi powersave: modest battery savings on laptops.
+      wifi.powersave = true;
+    };
     firewall = {
       enable = true;
       allowedTCPPorts = [ 22 80 443 ];
@@ -10,9 +14,6 @@
     };
     nameservers = [ "1.1.1.1" "8.8.8.8" "8.8.4.4" ];
   };
-
-  # WiFi powersave: modest battery savings on laptops.
-  services.NetworkManager.wifi.powersave = true;
 
   environment.systemPackages = with pkgs; [
     networkmanagerapplet
