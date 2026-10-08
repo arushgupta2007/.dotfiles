@@ -1,0 +1,286 @@
+// Niri configuration for the Framework Laptop running DMS.
+//
+// This is a curated config that:
+//   - Removes Hyprland-era hacks
+//   - Uses DMS IPC for power menu / launcher / clipboard
+//   - Provides consistent Super-based shortcuts
+//   - Keeps the user's existing touchpad / workspace preferences
+//
+// Reference: https://yalter.github.io/niri/Configuration:-Introduction
+
+// Don't draw client-side decorations where possible.
+prefer-no-csd
+
+// Input devices.
+input {
+    keyboard {
+        xkb {
+            layout "us"
+            options "ctrl:nocaps"
+        }
+        numlock
+    }
+
+    touchpad {
+        tap
+        dwt
+        dwtp
+        natural-scroll
+        accel-speed 0.4
+    }
+
+    mouse {
+        accel-speed 0.4
+    }
+
+    trackpoint {
+        accel-speed 0.4
+    }
+
+    workspace-auto-back-and-forth
+    focus-follows-mouse max-scroll-amount="0%"
+    mod-key "Super"
+    mod-key-nested "Alt"
+}
+
+// Layout: gaps, focus ring, etc.
+layout {
+    gaps 16
+    center-focused-column "never"
+
+    preset-column-widths {
+        proportion 0.33333
+        proportion 0.5
+        proportion 0.66667
+    }
+
+    default-column-width { proportion 0.5; }
+
+    focus-ring {
+        width 4
+        active-color "#7fc8ff"
+        inactive-color "#505050"
+    }
+
+    border {
+        off
+        width 4
+        active-color "#ffc87f"
+        inactive-color "#505050"
+        urgent-color "#9b0000"
+    }
+
+    shadow {
+        softness 30
+        spread 5
+        offset x=0 y=5
+        color "#0007"
+    }
+}
+
+// Named workspaces (kept for compatibility with previous config).
+workspace "Oxf" {
+  layout { focus-ring { width 4; active-color "#5e7b82"; } }
+}
+workspace "Prj" {
+  layout { focus-ring { active-color "#825dc6"; } }
+}
+workspace "Fun" {
+  layout { focus-ring { active-color "#ad6e43"; } }
+}
+
+// Spawn DMS-required services.
+spawn-at-startup "systemctl --user import-environment"
+spawn-at-startup "hash dbus-update-activation-environment 2>/dev/null"
+spawn-at-startup "dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=niri"
+
+hotkey-overlay {
+    skip-at-startup
+}
+
+recent-windows {
+    debounce-ms 750
+    open-delay-ms 500
+    highlight {
+        active-color "#999999ff"
+        urgent-color "#ff9999ff"
+        padding 30
+        corner-radius 0
+    }
+    previews {
+        max-height 480
+        max-scale 0.5
+    }
+    binds {
+        Mod+Z           { next-window; }
+        Mod+Tab         { next-window; }
+        Mod+Shift+Tab   { previous-window; }
+        Mod+grave       { next-window     filter="app-id"; }
+        Mod+Shift+grave { previous-window filter="app-id"; }
+    }
+}
+
+screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
+
+// Window rules.
+window-rule {
+    match app-id=r#"^org\.wezfurlong\.wezterm$"#
+    default-column-width {}
+}
+
+window-rule {
+    match title="^Picture-in-Picture$"
+    open-floating true
+}
+
+window-rule {
+    match app-id="brave-browser"
+    open-maximized true
+}
+
+window-rule {
+    geometry-corner-radius 12
+    clip-to-geometry true
+    opacity 0.975
+}
+
+binds {
+    Mod+Shift+Slash { show-hotkey-overlay; }
+
+    // Launchers.
+    Mod+Return  hotkey-overlay-title="Open a Terminal: Ghostty" { spawn "ghostty"; }
+    Mod+D       hotkey-overlay-title="Open Launcher: DMS"      { spawn-sh "dms ipc call launcher toggle"; }
+    Mod+V       hotkey-overlay-title="Open Clipboard: DMS"     { spawn-sh "dms ipc call clipboard toggle"; }
+
+    // Apps.
+    Mod+Shift+Return hotkey-overlay-title="Open File Explorer: Nautilus" { spawn-sh "nautilus --new-window"; }
+    Mod+E     hotkey-overlay-title="Open File Explorer: Nautilus" { spawn-sh "nautilus --new-window"; }
+    Mod+B     hotkey-overlay-title="Open a Browser: Brave"        { spawn "open-brave"; }
+    Mod+Shift+E hotkey-overlay-title="Open Editor: VSCodium"       { spawn-sh "codium"; }
+    Mod+Escape hotkey-overlay-title="Power Menu"                  { spawn-sh "dms ipc call powermenu toggle"; }
+
+    // Media keys.
+    XF86AudioPlay        allow-when-locked=true { spawn-sh "playerctl play-pause"; }
+    XF86AudioStop        allow-when-locked=true { spawn-sh "playerctl stop"; }
+    XF86AudioPrev        allow-when-locked=true { spawn-sh "playerctl previous"; }
+    XF86AudioNext        allow-when-locked=true { spawn-sh "playerctl next"; }
+    XF86AudioRaiseVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.05+"; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.05-"; }
+    XF86AudioMute        allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }
+    XF86MonBrightnessUp   allow-when-locked=true { spawn-sh "brightnessctl set +5%"; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn-sh "brightnessctl set 5%-"; }
+
+    // Overview.
+    Mod+O repeat=false { toggle-overview; }
+
+    // Window management.
+    Mod+Q repeat=false { close-window; }
+    Mod+F { maximize-column; }
+    Mod+Shift+F { fullscreen-window; }
+    Mod+Ctrl+F { expand-column-to-available-width; }
+    Mod+Ctrl+Shift+F { toggle-windowed-fullscreen; }
+    Mod+L { lock; }
+
+    // Column navigation.
+    Mod+Left  { focus-column-left; }
+    Mod+Down  { focus-window-down; }
+    Mod+Up    { focus-window-up; }
+    Mod+Right { focus-column-right; }
+    Mod+H     { focus-column-left; }
+    Mod+L     { focus-column-right; }
+
+    Mod+Shift+Left  { move-column-left; }
+    Mod+Shift+Down  { move-window-down; }
+    Mod+Shift+Up    { move-window-up; }
+    Mod+Shift+Right { move-column-right; }
+    Mod+Shift+H     { move-column-left; }
+    Mod+Shift+L     { move-column-right; }
+
+    Mod+J     { focus-window-or-workspace-down; }
+    Mod+K     { focus-window-or-workspace-up; }
+    Mod+Shift+J     { move-window-down-or-to-workspace-down; }
+    Mod+Shift+K     { move-window-up-or-to-workspace-up; }
+
+    Mod+Home { focus-column-first; }
+    Mod+End  { focus-column-last; }
+    Mod+Alt+Left { move-column-to-first; }
+    Mod+Alt+Right  { move-column-to-last; }
+
+    // Monitor navigation.
+    Mod+Ctrl+Left  { focus-monitor-left; }
+    Mod+Ctrl+Down  { focus-monitor-down; }
+    Mod+Ctrl+Up    { focus-monitor-up; }
+    Mod+Ctrl+Right { focus-monitor-right; }
+
+    Mod+Shift+Ctrl+Left  { move-column-to-monitor-left; }
+    Mod+Shift+Ctrl+Down  { move-column-to-monitor-down; }
+    Mod+Shift+Ctrl+Up    { move-column-to-monitor-up; }
+    Mod+Shift+Ctrl+Right { move-column-to-monitor-right; }
+
+    // Workspace navigation.
+    Mod+Page_Down      { focus-workspace-down; }
+    Mod+Page_Up        { focus-workspace-up; }
+    Mod+U              { focus-workspace-down; }
+    Mod+I              { focus-workspace-up; }
+    Mod+Ctrl+Page_Down { move-column-to-workspace-down; }
+    Mod+Ctrl+Page_Up   { move-column-to-workspace-up; }
+    Mod+Shift+Page_Down { move-workspace-down; }
+    Mod+Shift+Page_Up   { move-workspace-up; }
+
+    // Workspace numbers.
+    Mod+1 { focus-workspace 1; }
+    Mod+2 { focus-workspace 2; }
+    Mod+3 { focus-workspace 3; }
+    Mod+4 { focus-workspace 4; }
+    Mod+5 { focus-workspace 5; }
+    Mod+6 { focus-workspace 6; }
+    Mod+7 { focus-workspace 7; }
+    Mod+8 { focus-workspace 8; }
+    Mod+9 { focus-workspace 9; }
+    Mod+0 { focus-workspace 10; }
+
+    Mod+Ctrl+1 { move-column-to-workspace 1; }
+    Mod+Ctrl+2 { move-column-to-workspace 2; }
+    Mod+Ctrl+3 { move-column-to-workspace 3; }
+    Mod+Ctrl+4 { move-column-to-workspace 4; }
+    Mod+Ctrl+5 { move-column-to-workspace 5; }
+    Mod+Ctrl+6 { move-column-to-workspace 6; }
+    Mod+Ctrl+7 { move-column-to-workspace 7; }
+    Mod+Ctrl+8 { move-column-to-workspace 8; }
+    Mod+Ctrl+9 { move-column-to-workspace 9; }
+    Mod+Ctrl+0 { move-column-to-workspace 10; }
+
+    // Column manipulation.
+    Mod+BracketLeft  { consume-or-expel-window-left; }
+    Mod+BracketRight { consume-or-expel-window-right; }
+    Mod+Comma  { consume-window-into-column; }
+    Mod+Period { expel-window-from-column; }
+
+    Mod+R { switch-preset-column-width; }
+    Mod+Shift+R { switch-preset-window-height; }
+    Mod+Ctrl+R { reset-window-height; }
+    Mod+Shift+M repeat=false { spawn-sh "wl-mirror $(niri msg --json focused-output | jq -r .name)"; }
+
+    Mod+Minus { set-column-width "-10%"; }
+    Mod+Equal { set-column-width "+10%"; }
+    Mod+Shift+Minus { set-window-height "-10%"; }
+    Mod+Shift+Equal { set-window-height "+10%"; }
+
+    Mod+P       { toggle-window-floating; }
+    Mod+Shift+P { switch-focus-between-floating-and-tiling; }
+    Mod+W { toggle-column-tabbed-display; }
+    Mod+C { center-column; }
+    Mod+Ctrl+C { center-visible-columns; }
+
+    // Screenshots.
+    Print         { spawn-sh "screenshot-region"; }
+    Ctrl+Print    { spawn-sh "screenshot-screen"; }
+    Alt+Print     { spawn-sh "screenshot-window"; }
+    Super+Print   { spawn-sh "swappy -f $(wl-paste)"; }
+
+    Mod+Shift+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
+    Mod+Shift+E { quit; }
+    Ctrl+Alt+Delete { quit; }
+
+    Alt+Shift+P { power-off-monitors; }
+}

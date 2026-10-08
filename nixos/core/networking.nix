@@ -1,0 +1,25 @@
+{ pkgs, ... }:
+
+{
+  networking = {
+    networkmanager.enable = true;
+    firewall = {
+      enable = true;
+      allowedTCPPorts = [ 22 80 443 ];
+      allowedUDPPorts = [ ];
+    };
+    nameservers = [ "1.1.1.1" "8.8.8.8" "8.8.4.4" ];
+    wireless.enable = false; # NetworkManager handles wireless
+  };
+
+  environment.systemPackages = with pkgs; [
+    networkmanagerapplet
+  ];
+
+  # Resolve mDNS for local services (KDE Connect, LocalSend, printers).
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+    openFirewall = true;
+  };
+}

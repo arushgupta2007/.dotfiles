@@ -1,0 +1,19 @@
+{
+  imports = [
+    ./locale.nix
+    ./nix.nix
+    ./bootloader.nix
+    ./kernel.nix
+    ./networking.nix
+    ./pipewire.nix
+    ./bluetooth.nix
+    ./power.nix
+    ./services.nix
+    ./security.nix
+    ./virtualization.nix
+    ./podman.nix
+    ./fingerprint.nix
+    ./agenix.nix
+    ./users.nix
+  ];
+}
