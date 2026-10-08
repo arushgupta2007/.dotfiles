@@ -21,5 +21,5 @@
   services.openssh.enable = lib.mkDefault false;
 
   # Disable unused legacy services.
-  services.nscd.enable = lib.mkForce false;
+  services.nscd.enable = lib.mkForce true;
 }

@@ -20,6 +20,9 @@
       "docker"
     ];
     shell = pkgs.zsh;
+    # The user's shell is configured via Home Manager, so the system
+    # check is satisfied by HM rather than NixOS modules.
+    ignoreShellProgramCheck = true;
   };
 
   # Prevent unprivileged users from running Nix.

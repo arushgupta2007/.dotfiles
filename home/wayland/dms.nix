@@ -18,7 +18,6 @@
 
     # Core DMS features.
     enableSystemMonitoring = true;
-    enableClipboard = true;
     enableVPN = true;
     enableDynamicTheming = true;
     enableAudioWavelength = true;
