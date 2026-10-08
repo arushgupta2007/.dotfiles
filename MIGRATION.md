@@ -444,3 +444,101 @@ true
   user NixOS creates. If you ever add a second user, they will need their
   own `home.sessionVariables.DOCKER_HOST`.
 - Locale fallback (`C.UTF-8` / `en_US.UTF-8`) — see "Outstanding items".
+
+---
+
+## Phase 7 — Claude Code → Pi migration (final pass)
+
+This is the final pass that removes all Claude Code references from
+the new configuration and makes Pi Coding Agent + OpenRouter the
+primary AI setup.
+
+### Files modified
+
+| File | Change |
+| --- | --- |
+| `secrets/secrets.nix` | Renamed `claude-code-openrouter.age` → `openrouter-api-key.age` |
+| `secrets/README.md` | Updated provisioning steps for the renamed secret |
+| `home/core/agenix.nix` | Renamed `age.secrets.<name>` to `openrouter-api-key` |
+| `home/core/ai.nix` | Replaced `lib.mkIf` with `lib.optional`; removed the obsolete `claude-openrouter` wrapper; switched auth from the unsupported `OPENROUTER_API_KEY_FILE` env var to Pi's `auth.json` `!command` mechanism; deployed files to `~/.pi/agent/` |
+| `pi/settings.json` | Removed Claude Sonnet default; added verified model IDs (`moonshotai/kimi-k2.6`, `qwen/qwen3-coder-next`, etc.); kept Anthropic models in the enabled list so `/model` can switch |
+| `README.md` | Updated Pi + OpenRouter setup steps, model list, and renamed-secret instructions |
+| `home/wayland/niri-config.kdl` | Replaced the broken `Super+Print` (which passed binary clipboard data as a filename to swappy) with a `grim` + `mktemp` + `swappy` pipeline; switched `Print`/`Ctrl+Print`/`Alt+Print` to Niri's native screenshot actions |
+| `home/wayland/niri.nix` | Removed obsolete `screenshot-region`/`-screen`/`-window` shell scripts |
+| `nixos/wayland/portals.nix` | Removed `xdg-desktop-portal-wlr` (Niri is not wlroots-based); switched portal default to `[ "gnome" "gtk" ]` per Niri's upstream recommendation |
+| `home/core/platform.nix` | Replaced hardcoded UID 1000 in `DOCKER_HOST` with `$XDG_RUNTIME_DIR` shell expansion |
+| `home/core/browsers.nix` | Removed duplicate `--enable-features=UseOzonePlatform`; consolidated feature flags into a single comma-separated list |
+
+### Model verification
+
+Model IDs were verified against the bundled Pi 0.87.1 catalog
+(`dist/bundle/chunks/chunk-OJP47DM6.js`) by extracting every
+`provider/model` string and confirming the candidates:
+
+- ✅ `moonshotai/kimi-k2.6` (default — well-known coding model)
+- ✅ `qwen/qwen3-coder-next` (coding-specialised)
+- ✅ `anthropic/claude-sonnet-4` and `anthropic/claude-haiku-4.5` (retained for `/model` switching)
+- ✅ `openai/gpt-4.1`, `openai/gpt-4.1-mini`, `google/gemini-2.5-pro`, `google/gemini-2.5-flash`
+
+No model IDs were invented. Pricing is not committed to the
+configuration; if the user wants to inspect per-token pricing, OpenRouter's
+public catalog is the source of truth.
+
+### OpenRouter authentication
+
+- The plaintext key never enters a Nix expression or the Nix store.
+- Decryption happens at activation via agenix, owned by the user with
+  mode 0600 in a tmpfs mount.
+- Pi consumes the key via `<agent-dir>/auth.json`:
+  ```json
+  { "openrouter": { "type": "api_key", "key": "!cat /run/user/<uid>/agenix/openrouter-api-key" } }
+  ```
+  Pi runs `cat` against the agenix tmpfs and uses its stdout as the
+  API key — verified in Pi's `docs/providers.md` (the `!command` prefix
+  is documented behaviour, with empty / non-zero exit leaving the key
+  unresolved).
+- The build does NOT block on the secret being present: the auth.json
+  file is wrapped in `lib.mkIf hasSecret` so the system builds even
+  before the user encrypts the key.
+
+### Manual steps required before activation
+
+1. From `~/.dotfiles`, encrypt the OpenRouter API key:
+   ```bash
+   agenix -e secrets/openrouter-api-key.age
+   ```
+   Paste the key (`sk-or-v1-...`), save, exit.
+2. Review `MIGRATION.md` and confirm the changes.
+3. Authorise `sudo nixos-rebuild switch --flake .#framework-laptop`
+   and reboot.
+4. After reboot, run the runtime checks listed earlier in this document.
+
+### Validation results
+
+```
+$ nix flake check                                   → all checks passed!
+$ nix build .#nixosConfigurations.framework-laptop
+  .config.system.build.toplevel --no-link            → built successfully
+$ niri validate --config home/wayland/niri-config.kdl → config is valid
+$ python3 -m json.tool pi/settings.json              → valid JSON
+$ grep -r claude home/ nixos/ pi/ secrets/ README.md MIGRATION.md
+  → only Anthropic model IDs in pi/settings.json (intentional)
+```
+
+### Activation readiness
+
+**READY FOR CONTROLLED TESTING**, provided the user:
+
+1. Encrypts the OpenRouter API key with `agenix -e secrets/openrouter-api-key.age`.
+2. Reviews and approves the diff between `20261007-config` and the live system.
+3. Authorises `sudo nixos-rebuild switch --flake .#framework-laptop` and reboot.
+
+Runtime testing required after activation:
+
+- Pi successfully authenticating against OpenRouter via the `!cat` command
+- Niri's `Super+L` triggering `dms ipc call lock lock`
+- Niri's native `screenshot` / `screenshot-screen` / `screenshot-window` actions writing to disk AND clipboard
+- `Super+Print` opening Swappy over a fresh region capture
+- Lazydocker connecting to `$XDG_RUNTIME_DIR/podman/podman.sock`
+- `xdg-desktop-portal-gnome` providing screencast support in Brave / VSCodium
+
