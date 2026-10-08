@@ -48,8 +48,8 @@
   services.gnome-keyring.enable = true;
 
   # GnuPG agent for SSH / GPG.
-  programs.gnupg.agent = {
+  services.gpg-agent = {
     enable = true;
-    enableSSHSupport = true;
+    enableSshSupport = true;
   };
 }
