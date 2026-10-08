@@ -15,12 +15,10 @@ pkgs.mkShell {
     nil
     statix
     deadnix
-    nixpkgs-fmt
 
     # Tools.
     nix-output-monitor
     nvd
-    nixpkgs-review-tools
     nh
     git
 
