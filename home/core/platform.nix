@@ -30,9 +30,12 @@
   };
 
   # Lazydocker reads $DOCKER_HOST; rootless podman listens on the
-  # user-level socket at /run/user/$UID/podman/podman.sock.
+  # user-level socket at $XDG_RUNTIME_DIR/podman/podman.sock. Using
+  # $XDG_RUNTIME_DIR (rather than a hardcoded UID) lets this work for
+  # any user without modification. Home Manager writes this to
+  # ~/.profile / /etc/profile.d, where the shell expands the variable.
   home.sessionVariables = {
-    DOCKER_HOST = "unix:///run/user/1000/podman/podman.sock";
+    DOCKER_HOST = "unix://$XDG_RUNTIME_DIR/podman/podman.sock";
   };
 
   # Auto-start the user podman socket so lazydocker / podman CLI work
@@ -47,4 +50,3 @@
     Install.WantedBy = [ "sockets.target" ];
   };
 }
-

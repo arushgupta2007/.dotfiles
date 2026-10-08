@@ -311,12 +311,16 @@ pinned Home Manager: the pattern is used by HM itself (e.g.
 `modules/programs/astroid/default.nix`, `modules/programs/macchina/default.nix`).
 **No fix required.**
 
-**3. `defaultModel` / `enabledModels`.** Verified against OpenRouter's
-public model catalog. Current IDs used:
+**3. `defaultModel` / `enabledModels`.** Verified against the bundled
+Pi 0.87.1 catalog (`dist/bundle/chunks/chunk-OJP47DM6.js`). Current IDs
+in `pi/settings.json`: `moonshotai/kimi-k2.6` (default),
+`moonshotai/kimi-k2-thinking`, `qwen/qwen3-coder-next`,
+`qwen/qwen3-coder-plus`, `qwen/qwen3-coder-flash`,
 `anthropic/claude-sonnet-4`, `anthropic/claude-haiku-4.5`,
 `openai/gpt-4.1`, `openai/gpt-4.1-mini`, `google/gemini-2.5-pro`,
-`google/gemini-2.5-flash`. Sonnet 4 stays as the default; Haiku 4.5 stays
-as the cheaper fallback.
+`google/gemini-2.5-flash`. Kimi K2.6 (verified by grep against the
+bundled catalog) is now the default; Claude models are still in the
+enabled list so `/model` can switch to them on demand.
 
 ### Phase 4 — Agenix + networking
 
@@ -416,16 +420,15 @@ true
 
 ### Runtime checks required after activation
 
-1. `agenix -e secrets/claude-code-openrouter.age` to encrypt the
+1. `agenix -e secrets/openrouter-api-key.age` to encrypt the
    OpenRouter API key before first `home-manager switch` that needs it.
 2. `sudo nixos-rebuild switch --flake .#framework-laptop` (requires
    user approval) and reboot.
 3. After reboot:
-   - Confirm Niri starts, `Mod+L` toggles DMS lock screen.
+   - Confirm Niri starts, `Super+L` toggles DMS lock screen.
    - Confirm Ghostty closes surfaces with a confirmation prompt and asks
      for confirmation on multi-line paste.
-   - Confirm `lazydocker` connects (it should auto-detect podman via
-     `DOCKER_HOST`).
+   - Confirm `lazydocker` connects to the rootless podman socket.
    - Confirm `dms ipc call lock lock` works from a terminal.
    - `fwupdmgr refresh --force && fwupdmgr get-updates && fwupdmgr update`
      to pull firmware updates through LVFS.
@@ -433,8 +436,10 @@ true
 
 ### Remaining concerns
 
-- Pi's `defaultModel` (`anthropic/claude-sonnet-4`) may need to be updated
-  if OpenRouter renames the slug.
+- Pi's `defaultModel` (`openrouter/moonshotai/kimi-k2.6`) is the
+  Kimi K2.6 model via OpenRouter. Claude models remain selectable via
+  `/model` if needed. If OpenRouter renames any slug, `defaultModel`
+  will need updating.
 - `DOCKER_HOST` is hardcoded to UID 1000; this matches the first non-root
   user NixOS creates. If you ever add a second user, they will need their
   own `home.sessionVariables.DOCKER_HOST`.

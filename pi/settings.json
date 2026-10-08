@@ -1,8 +1,13 @@
 {
   "defaultProvider": "openrouter",
-  "defaultModel": "openrouter/anthropic/claude-sonnet-4",
+  "defaultModel": "openrouter/moonshotai/kimi-k2.6",
   "defaultThinkingLevel": "medium",
   "enabledModels": [
+    "openrouter/moonshotai/kimi-k2.6",
+    "openrouter/moonshotai/kimi-k2-thinking",
+    "openrouter/qwen/qwen3-coder-next",
+    "openrouter/qwen/qwen3-coder-plus",
+    "openrouter/qwen/qwen3-coder-flash",
     "openrouter/anthropic/claude-sonnet-4",
     "openrouter/anthropic/claude-haiku-4.5",
     "openrouter/openai/gpt-4.1",
@@ -11,6 +16,7 @@
     "openrouter/google/gemini-2.5-flash"
   ],
   "modelThinkingLevels": {
+    "openrouter/qwen/qwen3-coder-flash": "low",
     "openrouter/anthropic/claude-haiku-4.5": "low",
     "openrouter/openai/gpt-4.1-mini": "low",
     "openrouter/google/gemini-2.5-flash": "low"

@@ -6,21 +6,21 @@
 }:
 
 let
-  secretFile = ../../secrets/claude-code-openrouter.age;
+  secretFile = ../../secrets/openrouter-api-key.age;
   hasSecret = builtins.pathExists secretFile;
 in
 {
   imports = [ inputs.agenix.homeManagerModules.default ];
 
-  # Agenix pulls in user-level secrets. Identity path is the SSH key on
-  # the user's machine.
+  # Agenix pulls in user-level secrets. Identity path is the user's
+  # personal SSH key on this machine.
   age.identityPaths = [ "${config.home.homeDirectory}/.ssh/id_ed25519" ];
 
-  # OpenRouter key for Pi coding agent — managed by agenix, never in the
-  # Nix store. The secret is only loaded when the file exists; the user
-  # must generate it with `agenix -e secrets/claude-code-openrouter.age`
+  # OpenRouter API key for Pi Coding Agent. Loaded only when the
+  # encrypted file exists; the user provisions it with
+  #   agenix -e secrets/openrouter-api-key.age
   # before the key becomes available at runtime.
-  age.secrets.claude-code-openrouter = lib.mkIf hasSecret {
+  age.secrets.openrouter-api-key = lib.mkIf hasSecret {
     file = secretFile;
   };
 }

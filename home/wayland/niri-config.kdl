@@ -270,10 +270,16 @@ binds {
     Mod+Ctrl+C { center-visible-columns; }
 
     // Screenshots.
-    Print         { spawn-sh "screenshot-region"; }
-    Ctrl+Print    { spawn-sh "screenshot-screen"; }
-    Alt+Print     { spawn-sh "screenshot-window"; }
-    Super+Print   { spawn-sh "swappy -f $(wl-paste)"; }
+    // Niri's native screenshot actions handle both clipboard AND disk
+    // (via the `screenshot-path` option above). The interactive
+    // `screenshot` action opens Niri's built-in region picker.
+    Print         { screenshot; }
+    Ctrl+Print    { screenshot-screen; }
+    Alt+Print     { screenshot-window; }
+
+    // Swappy: capture a region, hand it to the editor, clean up the
+    // temp file. `mktemp` + positional args avoid injection.
+    Super+Print   { spawn-sh "tmp=\"$(mktemp --suffix=.png)\" && grim -g \"$(slurp)\" \"$tmp\" && swappy -f \"$tmp\"; rm -f \"$tmp\""; }
 
     Mod+Shift+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
     Ctrl+Alt+Delete { quit; }
