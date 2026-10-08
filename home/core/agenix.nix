@@ -1,9 +1,12 @@
 {
+  inputs,
   config,
   ...
 }:
 
 {
+  imports = [ inputs.agenix.homeManagerModules.default ];
+
   # Agenix pulls in user-level secrets. Identity path is the SSH key on
   # the user's machine; this matches the existing repo's pattern.
   age.identityPaths = [ "${config.home.homeDirectory}/.ssh/id_ed25519" ];
