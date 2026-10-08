@@ -29,8 +29,31 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nixpkgs-stable = {
-      url = "github:NixOS/nixpkgs/nixos-26.05";
+    # Per-language dev shell templates. Each is a self-contained flake
+    # usable on its own via `nix develop ./templates/python` etc.
+    python-template = {
+      url = "path:./templates/python";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    node-template = {
+      url = "path:./templates/node";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    rust-template = {
+      url = "path:./templates/rust";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    go-template = {
+      url = "path:./templates/go";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    cpp-template = {
+      url = "path:./templates/cpp";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nix-template = {
+      url = "path:./templates/nix";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
@@ -42,16 +65,18 @@
       agenix,
       nixos-hardware,
       dms,
+      python-template,
+      node-template,
+      rust-template,
+      go-template,
+      cpp-template,
+      nix-template,
       ...
     }@inputs:
     let
       inherit (nixpkgs) lib;
       system = "x86_64-linux";
       username = "arush";
-      pkgs = import nixpkgs {
-        inherit system;
-        config.allowUnfree = true;
-      };
     in
     {
       nixosConfigurations = {
@@ -78,16 +103,17 @@
         };
       };
 
-      # Exposed development shells (templates).
+      # Expose the language dev shells via the main flake for convenience.
+      # These are also fully self-contained — see templates/<lang>/flake.nix.
       devShells.${system} = {
-        python = (import ./templates/python/shell.nix) { inherit pkgs; };
-        node = (import ./templates/node/shell.nix) { inherit pkgs; };
-        rust = (import ./templates/rust/shell.nix) { inherit pkgs; };
-        go = (import ./templates/go/shell.nix) { inherit pkgs; };
-        cpp = (import ./templates/cpp/shell.nix) { inherit pkgs; };
-        nix = (import ./templates/nix/shell.nix) { inherit pkgs; };
+        python = python-template.devShells.${system}.default;
+        node = node-template.devShells.${system}.default;
+        rust = rust-template.devShells.${system}.default;
+        go = go-template.devShells.${system}.default;
+        cpp = cpp-template.devShells.${system}.default;
+        nix = nix-template.devShells.${system}.default;
       };
 
-      formatter.${system} = pkgs.nixfmt;
+      formatter.${system} = nixpkgs.legacyPackages.${system}.nixfmt;
     };
 }
