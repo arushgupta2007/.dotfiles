@@ -61,7 +61,6 @@
             ./hosts/framework-laptop
             agenix.nixosModules.default
             home-manager.nixosModules.home-manager
-            dms.nixosModules.greeter
             {
               home-manager = {
                 useGlobalPkgs = true;
