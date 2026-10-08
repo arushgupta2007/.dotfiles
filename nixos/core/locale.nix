@@ -7,8 +7,9 @@
   i18n = {
     defaultLocale = "en_IN.UTF-8";
 
-    # Make sure the locale archive contains the locales we use.
-    supportedLocales = [
+    # Locales compiled into the system locale archive. Use `extraLocales`
+    # (replaces the deprecated `supportedLocales`).
+    extraLocales = [
       "en_IN.UTF-8/UTF-8"
       "en_US.UTF-8/UTF-8"
       "C.UTF-8/UTF-8"
