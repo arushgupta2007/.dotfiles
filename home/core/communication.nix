@@ -6,6 +6,5 @@
     indicator = true;
   };
 
-  # LocalSend: enabled per-service file transfer.
-  services.localsend.enable = true;
+  home.packages = [ pkgs.localsend ];
 }
