@@ -14,7 +14,7 @@ pkgs.mkShell {
     typescript
     biome
     deno
-    nodePackages_latest.vite
+    vite
 
     # Build tools.
     git
