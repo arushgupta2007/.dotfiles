@@ -6,14 +6,6 @@
 {
   # System fonts.
   fonts.fontconfig.enable = true;
-  home.packages = with pkgs; [
-    nerd-fonts.jetbrains-mono
-    nerd-fonts.fira-code
-    nerd-fonts.symbols-only
-    twemoji-color-font
-    noto-fonts-color-emoji
-    google-fonts
-  ];
 
   # GTK theme: Material-style via Gruvbox.
   gtk = {
@@ -55,7 +47,6 @@
       name = "breeze";
     };
   };
-  home.packages = with pkgs; [ kdePackages.qt6ct ];
 
   # Bat config.
   programs.bat = {
@@ -80,7 +71,22 @@
       update_ms = 500;
     };
   };
-  home.packages = [ pkgs.nvtopPackages.intel ];
+
+  home.packages = with pkgs; [
+    # Fonts.
+    nerd-fonts.jetbrains-mono
+    nerd-fonts.fira-code
+    nerd-fonts.symbols-only
+    twemoji-color-font
+    noto-fonts-color-emoji
+    google-fonts
+
+    # Qt config tool.
+    kdePackages.qt6ct
+
+    # nvtop for Intel GPU monitoring.
+    nvtopPackages.intel
+  ];
 
   # Mime associations: Brave is the default browser; VLC for video; Nautilus
   # for directories.
