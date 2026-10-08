@@ -36,18 +36,15 @@
   };
 
   # Auto-start the user podman socket so lazydocker / podman CLI work
-  # after a fresh login. `wantedBy = [ "default.target" ]` makes it
-  # start at session start.
+  # after a fresh login. The `%t` specifier expands to the user's
+  # XDG_RUNTIME_DIR at activation time.
   systemd.user.sockets.podman = {
+    Unit.Description = "Podman API Socket";
     Socket = {
       ListenStream = "%t/podman/podman.sock";
-      RuntimeDirectory = "podman";
       SocketMode = "0660";
-      Group = "users";
     };
-    Install = {
-      WantedBy = [ "default.target" ];
-    };
+    Install.WantedBy = [ "sockets.target" ];
   };
 }
 
