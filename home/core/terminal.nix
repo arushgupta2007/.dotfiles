@@ -35,7 +35,6 @@
 
     # System monitors / utilities.
     btop
-    btrfs-du
     duf
     dust
     ncdu

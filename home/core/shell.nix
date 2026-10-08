@@ -138,11 +138,11 @@ in
     };
   };
 
-  # Searchable shell history (Atuin). Opt-in: requires `atuin init zsh` to
-  # be sourced, which is wired through `programs.atuin.enableZshIntegration`.
+  # Searchable shell history (Atuin). Disables Ctrl-R so fzf retains it.
   programs.atuin = {
     enable = true;
     enableZshIntegration = true;
+    flags = [ "--disable-ctrl-r" ];
     settings = {
       auto_sync = false; # Local-only history by default; turn on if desired.
       search_mode = "fuzzy";
