@@ -20,9 +20,6 @@
   # OpenSSH only enabled when explicitly opted in (not by default).
   services.openssh.enable = lib.mkDefault false;
 
-  # Disable root login; rely on sudo + wheel group.
-  users.motd = ""
-
   # Disable unused legacy services.
   services.nscd.enable = lib.mkForce false;
 }
