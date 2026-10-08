@@ -3,6 +3,7 @@
 {
   networking = {
     networkmanager.enable = true;
+    wifi.powersave = true;
     firewall = {
       enable = true;
       allowedTCPPorts = [ 22 80 443 ];

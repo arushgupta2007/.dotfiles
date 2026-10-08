@@ -16,7 +16,7 @@
     HandlePowerKey = "ignore";
     HandleSuspendKey = "suspend";
     HandleHibernateKey = "hibernate";
-    HandleLidSwitch = "suspend";
+    HandleLidSwitch = "suspend-then-hibernate";
     HandleLidSwitchDocked = "ignore";
   };
 

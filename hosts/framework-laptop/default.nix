@@ -10,6 +10,7 @@
     ./hardware-configuration.nix
     ../../nixos/core
     ../../nixos/wayland
+    ../../nixos/wayland/framework-laptop.nix
   ];
 
   # Host identity
@@ -48,6 +49,9 @@
     percentageAction = 3;
     criticalPowerAction = "PowerOff";
   };
+
+  # Firmware updates via LVFS — Framework ships BIOS / EC updates here.
+  services.fwupd.enable = true;
 
   # Firewall — keep closed by default, open KDE Connect ports for phone
   # integration.

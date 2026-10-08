@@ -1,6 +1,5 @@
 {
   "claude-code-openrouter.age".publicKeys = [
-    # Add your SSH ed25519 public key here. Example:
-    # "ssh-ed25519 AAAAC3... arush@host"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID3D9KNtWPB9wQORWgrR+Z1+RlGWKybMeYgtRtlmwc2W arush.agu@protonmail.com"
   ];
 }
