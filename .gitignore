@@ -1,0 +1,30 @@
+# Nix build symlinks
+result
+result-*
+
+# Secret material (already encrypted on disk)
+*.age
+!secrets/*.age.example
+
+# Local shell / editor scratch
+*.swp
+.DS_Store
+
+# Python
+__pycache__
+*.pyc
+.venv/
+
+# Node
+node_modules/
+
+# Editor caches
+.cache/
+.fleet/
+.idea/
+.vscode/
+
+# Build directories
+build/
+dist/
+target/

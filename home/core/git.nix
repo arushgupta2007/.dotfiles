@@ -12,8 +12,6 @@
       credential.helper = "store";
       merge.conflictstyle = "diff3";
       diff.colorMoved = "default";
-    };
-    extraConfig = {
       # Avoid spurious rebase noise on GitHub forks.
       pull.rebase = false;
     };
