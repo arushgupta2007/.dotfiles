@@ -12,7 +12,7 @@ pkgs.mkShell {
     # Compilers.
     gcc
     clang
-    clang-tools
+    clang-tools # contains clangd, clang-tidy, clang-format
     gnumake
     cmake
     ninja
@@ -23,11 +23,7 @@ pkgs.mkShell {
     valgrind
     cppcheck
     include-what-you-use
-    clang-tools
     bear
-
-    # Language server.
-    clangd
 
     # System deps.
     pkg-config
@@ -35,9 +31,6 @@ pkgs.mkShell {
     boost
     zlib
     zstd
-
-    # Format.
-    clang-tools
     llvmPackages.libclang
 
     git
