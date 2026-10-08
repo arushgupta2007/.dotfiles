@@ -6,5 +6,6 @@
     indicator = true;
   };
 
-  home.packages = [ pkgs.localsend ];
+  # LocalSend is installed via programs.localsend in nixos/core/services.nix
+  # (which also opens the firewall port).
 }

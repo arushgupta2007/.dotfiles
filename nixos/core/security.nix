@@ -19,7 +19,4 @@
 
   # OpenSSH only enabled when explicitly opted in (not by default).
   services.openssh.enable = lib.mkDefault false;
-
-  # Disable unused legacy services.
-  services.nscd.enable = lib.mkForce true;
 }

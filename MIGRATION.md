@@ -152,6 +152,17 @@ is documented in the README. The choice is arbitrary; if you prefer to keep
 
 Tracked in `git log` inside the new repo.
 
+### Templates
+
+Each `templates/<lang>/` is a **self-contained flake** with its own
+`flake.nix` and `flake.lock`, using `flake-utils.lib.eachDefaultSystem`.
+The legacy `shell.nix` form was removed in favour of flakes, which is the
+modern Nix approach.
+
+The main flake references each template via `path:` flake inputs and
+exposes them at `devShells.x86_64-linux.<lang>` so users can still do
+`nix develop .#python` from the main repo.
+
 ### Status
 
 - [x] Audit

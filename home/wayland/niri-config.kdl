@@ -79,15 +79,11 @@ layout {
 }
 
 // Named workspaces (kept for compatibility with previous config).
-workspace "Oxf" {
-  layout { focus-ring { width 4; active-color "#5e7b82"; } }
-}
-workspace "Prj" {
-  layout { focus-ring { active-color "#825dc6"; } }
-}
-workspace "Fun" {
-  layout { focus-ring { active-color "#ad6e43"; } }
-}
+// Note: named workspaces only accept `open-on-output` per Niri syntax;
+// per-workspace visual styling goes in window-rules.
+workspace "Oxf"
+workspace "Prj"
+workspace "Fun"
 
 // Spawn DMS-required services.
 spawn-at-startup "systemctl --user import-environment"
@@ -179,22 +175,23 @@ binds {
     Mod+Shift+F { fullscreen-window; }
     Mod+Ctrl+F { expand-column-to-available-width; }
     Mod+Ctrl+Shift+F { toggle-windowed-fullscreen; }
-    Mod+L { lock; }
+    // Lock the screen via DMS IPC. `lock;` is not a valid Niri action.
+    Mod+L hotkey-overlay-title="Lock Screen: DMS" { spawn "dms" "ipc" "call" "lock" "lock"; }
 
-    // Column navigation.
+    // Column navigation. Arrow keys + HJKL except L is reserved for lock.
     Mod+Left  { focus-column-left; }
     Mod+Down  { focus-window-down; }
     Mod+Up    { focus-window-up; }
     Mod+Right { focus-column-right; }
     Mod+H     { focus-column-left; }
-    Mod+L     { focus-column-right; }
+    Mod+Semicolon { focus-column-right; }
 
     Mod+Shift+Left  { move-column-left; }
     Mod+Shift+Down  { move-window-down; }
     Mod+Shift+Up    { move-window-up; }
     Mod+Shift+Right { move-column-right; }
     Mod+Shift+H     { move-column-left; }
-    Mod+Shift+L     { move-column-right; }
+    Mod+Shift+Semicolon { move-column-right; }
 
     Mod+J     { focus-window-or-workspace-down; }
     Mod+K     { focus-window-or-workspace-up; }
@@ -279,7 +276,6 @@ binds {
     Super+Print   { spawn-sh "swappy -f $(wl-paste)"; }
 
     Mod+Shift+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
-    Mod+Shift+E { quit; }
     Ctrl+Alt+Delete { quit; }
 
     Alt+Shift+P { power-off-monitors; }

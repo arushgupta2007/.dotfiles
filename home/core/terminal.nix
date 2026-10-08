@@ -14,8 +14,11 @@
       window-padding-x = 10;
       window-padding-y = 10;
       background-opacity = 0.95;
-      confirm-close-window = false;
-      clipboard-paste-protection = false;
+      # Confirm before closing a surface (e.g., Ctrl+Shift+W in a tab).
+      confirm-close-surface = true;
+      # Require confirmation before pasting text that may contain a
+      # newline / escape sequence (mitigates copy-paste attacks).
+      clipboard-paste-protection = true;
       mouse-hide-while-typed = true;
       scrollback-limit = 10000;
       command = "zsh";

@@ -9,8 +9,6 @@
     loupe
     mpv
     file-roller
-    localsend
-    restic
     btrfs-progs
   ];
 
