@@ -9,7 +9,6 @@
       allowedUDPPorts = [ ];
     };
     nameservers = [ "1.1.1.1" "8.8.8.8" "8.8.4.4" ];
-    wireless.enable = false; # NetworkManager handles wireless
   };
 
   environment.systemPackages = with pkgs; [
