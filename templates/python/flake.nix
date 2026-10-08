@@ -7,30 +7,30 @@
   };
 
   outputs = { self, nixpkgs, flake-utils }:
-    flake-utils.lib.eachDefaultSystem (system:
-      let
-        pkgs = import nixpkgs {
-          inherit system;
-          config.allowUnfree = true;
-        };
-        py = pkgs.python313.withPackages (p: with p; [
-          requests
-          numpy
-          pandas
-          matplotlib
-          scipy
-          ruff
-          pytest
-          pytest-cov
-          ipython
-          black
-          isort
-          mypy
-          pipx
-        ]);
-      in
-      {
-        devShells.${system} = {
+    {
+      devShells = flake-utils.lib.eachDefaultSystem (system:
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+            config.allowUnfree = true;
+          };
+          py = pkgs.python313.withPackages (p: with p; [
+            requests
+            numpy
+            pandas
+            matplotlib
+            scipy
+            ruff
+            pytest
+            pytest-cov
+            ipython
+            black
+            isort
+            mypy
+            pipx
+          ]);
+        in
+        {
           default = pkgs.mkShell {
             name = "python-dev";
             packages = [
@@ -47,6 +47,6 @@
               fi
             '';
           };
-        };
-      });
+        });
+    };
 }

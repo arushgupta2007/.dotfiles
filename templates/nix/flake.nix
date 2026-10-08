@@ -7,15 +7,15 @@
   };
 
   outputs = { self, nixpkgs, flake-utils }:
-    flake-utils.lib.eachDefaultSystem (system:
-      let
-        pkgs = import nixpkgs {
-          inherit system;
-          config.allowUnfree = true;
-        };
-      in
-      {
-        devShells.${system} = {
+    {
+      devShells = flake-utils.lib.eachDefaultSystem (system:
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+            config.allowUnfree = true;
+          };
+        in
+        {
           default = pkgs.mkShell {
             name = "nix-dev";
             packages = with pkgs; [
@@ -35,6 +35,6 @@
               export NIX_CONFIG="experimental-features = nix-command flakes"
             '';
           };
-        };
-      });
+        });
+    };
 }
